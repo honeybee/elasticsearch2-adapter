@@ -1,0 +1,33 @@
+{
+    "name": "honeybee/elasticsearch2",
+    "type": "library",
+    "description": "Elasticsearch 2.x adapter for Honeybee.",
+    "keywords": [ "honeybee", "elasticsearch", "adapter" ],
+    "homepage": "https://github.com/honeybee/elasticsearch2",
+    "license": "MPL-2.0",
+    "prefer-stable": true,
+    "minimum-stability": "dev",
+    "require": {
+        "honeybee/honeybee": "dev-feature/disconnect as 0.2",
+        "elasticsearch/elasticsearch": "^2.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^5.5",
+        "mockery/mockery": "^0.9",
+        "squizlabs/php_codesniffer": "^2.8"
+    },
+    "autoload": {
+        "psr-4": { "Honeybee\\Elasticsearch2\\": "src" }
+    },
+    "autoload-dev": {
+        "psr-4": { "Honeybee\\Tests\\Elasticsearch2\\" : "tests" }
+    },
+    "scripts": {
+        "test": "phpunit",
+        "code-sniffer": "phpcs --extensions=php --standard=psr2 src tests",
+        "build": [
+            "@test",
+            "@code-sniffer"
+        ]
+    }
+}
