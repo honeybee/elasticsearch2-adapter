@@ -3,7 +3,7 @@
 namespace Honeybee\Elasticsearch2\Storage\DomainEvent;
 
 use Honeybee\Common\Error\RuntimeError;
-use Honeybee\Elasticsearch2\DataAccess\Storage\ElasticsearchStorageWriter;
+use Honeybee\Elasticsearch2\Storage\ElasticsearchStorageWriter;
 use Honeybee\Model\Event\AggregateRootEventInterface;
 use Honeybee\Infrastructure\Config\SettingsInterface;
 
