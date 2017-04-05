@@ -12,7 +12,7 @@ class BookType extends ProjectionType
         parent::__construct(
             'Book',
             [
-                new TextAttribute('title', $this, [ 'mandatory' => true ]),
+                new TextAttribute('title', $this, ['mandatory' => true]),
                 new TextAttribute('description', $this)
             ]
         );

@@ -13,7 +13,7 @@ class PublicationType extends ProjectionType
         parent::__construct(
             'Publication',
             [
-                new IntegerAttribute('year', $this, [ 'mandatory' => true ]),
+                new IntegerAttribute('year', $this, ['mandatory' => true]),
                 new TextAttribute('description', $this)
             ]
         );

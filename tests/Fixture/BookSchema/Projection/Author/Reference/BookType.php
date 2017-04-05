@@ -9,7 +9,7 @@ use Trellis\Runtime\EntityTypeInterface;
 
 class BookType extends ReferencedEntityType
 {
-    public function __construct(EntityTypeInterface $parent = null, AttributeInterface $parent_attribute = null)
+    public function __construct(EntityTypeInterface $parent = null, AttributeInterface $parentAttribute = null)
     {
         parent::__construct(
             'Book',
@@ -22,7 +22,7 @@ class BookType extends ReferencedEntityType
                 ]
             ),
             $parent,
-            $parent_attribute
+            $parentAttribute
         );
     }
 

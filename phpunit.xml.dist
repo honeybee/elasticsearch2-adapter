@@ -40,9 +40,9 @@
             <directory suffix=".php">tests</directory>
             <exclude>
                 <directory>tests/Fixture</directory>
-                <directory>tests/DataAccess/Finder/Fixture</directory>
-                <directory>tests/DataAccess/Finder/Projection/Fixture</directory>
-                <directory>tests/DataAccess/Storage/Fixture</directory>
+                <directory>tests/Finder/Fixture</directory>
+                <directory>tests/Finder/Projection/Fixture</directory>
+                <directory>tests/Storage/Fixture</directory>
             </exclude>
         </whitelist>
     </filter>

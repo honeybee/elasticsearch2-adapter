@@ -15,117 +15,117 @@ abstract class ElasticsearchMigration extends Migration
 
     const SCROLL_TIMEOUT = '30s';
 
-    abstract protected function getIndexSettingsPath(MigrationTargetInterface $migration_target);
+    abstract protected function getIndexSettingsPath(MigrationTargetInterface $migrationTarget);
 
-    abstract protected function getTypeMappingPaths(MigrationTargetInterface $migration_target);
+    abstract protected function getTypeMappingPaths(MigrationTargetInterface $migrationTarget);
 
     protected function createIndexIfNotExists(
-        MigrationTargetInterface $migration_target,
-        $register_type_mapping = false
+        MigrationTargetInterface $migrationTarget,
+        $registerTypeMapping = false
     ) {
-        $index_api = $this->getConnection($migration_target)->indices();
-        $params = [ 'index' => $this->getIndexName($migration_target) ];
-        if (!$index_api->exists($params) && !$this->getAliasMapping($migration_target)) {
-            $this->createIndex($migration_target, $register_type_mapping);
+        $indexApi = $this->getConnection($migrationTarget)->indices();
+        $params = ['index' => $this->getIndexName($migrationTarget)];
+        if (!$indexApi->exists($params) && !$this->getAliasMapping($migrationTarget)) {
+            $this->createIndex($migrationTarget, $registerTypeMapping);
         } else {
-            $this->updateMappings($migration_target);
+            $this->updateMappings($migrationTarget);
         }
     }
 
-    protected function createIndex(MigrationTargetInterface $migration_target, $register_type_mapping = false)
+    protected function createIndex(MigrationTargetInterface $migrationTarget, $registerTypeMapping = false)
     {
-        $index_api = $this->getConnection($migration_target)->indices();
-        $index_api->create(
-            $this->getIndexSettings($migration_target, $register_type_mapping)
+        $indexApi = $this->getConnection($migrationTarget)->indices();
+        $indexApi->create(
+            $this->getIndexSettings($migrationTarget, $registerTypeMapping)
         );
     }
 
-    protected function deleteIndex(MigrationTargetInterface $migration_target)
+    protected function deleteIndex(MigrationTargetInterface $migrationTarget)
     {
-        $index_api = $this->getConnection($migration_target)->indices();
-        $params = [ 'index' => $this->getIndexName($migration_target) ];
-        if ($index_api->exists($params)) {
-            $index_api->delete($params);
+        $indexApi = $this->getConnection($migrationTarget)->indices();
+        $params = ['index' => $this->getIndexName($migrationTarget)];
+        if ($indexApi->exists($params)) {
+            $indexApi->delete($params);
         }
     }
 
-    protected function updateMappings(MigrationTargetInterface $migration_target, $reindex_if_required = false)
+    protected function updateMappings(MigrationTargetInterface $migrationTarget, $reindexIfRequired = false)
     {
-        $index_api = $this->getConnection($migration_target)->indices();
-        $index_name = $this->getIndexName($migration_target);
-        $reindex_required = false;
+        $indexApi = $this->getConnection($migrationTarget)->indices();
+        $indexName = $this->getIndexName($migrationTarget);
+        $reindexRequired = false;
 
-        foreach ($this->getTypeMappings($migration_target) as $type_name => $mapping) {
+        foreach ($this->getTypeMappings($migrationTarget) as $typeName => $mapping) {
             try {
-                $index_api->putMapping(
+                $indexApi->putMapping(
                     [
-                        'index' => $index_name,
-                        'type' => $type_name,
-                        'body' => [ $type_name => $mapping ]
+                        'index' => $indexName,
+                        'type' => $typeName,
+                        'body' => [$typeName => $mapping]
                     ]
                 );
             } catch (BadRequest400Exception $error) {
-                if (!$reindex_if_required) {
+                if (!$reindexIfRequired) {
                     throw $error;
                 }
-                $reindex_required = true;
+                $reindexRequired = true;
             }
         }
 
-        if (true === $reindex_required && true === $reindex_if_required) {
-            $this->updateMappingsWithReindex($migration_target);
+        if (true === $reindexRequired && true === $reindexIfRequired) {
+            $this->updateMappingsWithReindex($migrationTarget);
         }
     }
 
-    protected function updateMappingsWithReindex(MigrationTargetInterface $migration_target)
+    protected function updateMappingsWithReindex(MigrationTargetInterface $migrationTarget)
     {
-        $client = $this->getConnection($migration_target);
-        $index_api = $client->indices();
-        $index_name = $this->getIndexName($migration_target);
-        $aliases = $this->getAliasMapping($migration_target);
+        $client = $this->getConnection($migrationTarget);
+        $indexApi = $client->indices();
+        $indexName = $this->getIndexName($migrationTarget);
+        $aliases = $this->getAliasMapping($migrationTarget);
 
         if (count($aliases) > 1) {
             throw new RuntimeError(sprintf(
                 'Aborting reindexing because there is more than one index mapped to the alias: %s',
-                $index_name
+                $indexName
             ));
         }
 
         // Allow index settings override
-        $index_settings = $this->getIndexSettings($migration_target);
-        $index_settings = isset($index_settings['body'])
-            ? $index_settings['body']
-            : current($index_api->getSettings([ 'index' => $index_name ]));
+        $indexSettings = $this->getIndexSettings($migrationTarget);
+        $indexSettings = isset($indexSettings['body'])
+            ? $indexSettings['body']
+            : current($indexApi->getSettings(['index' => $indexName]));
 
         // Load existing mappings from previous index
-        $index_mappings = current($index_api->getMapping([ 'index' => $index_name ]));
-        $current_index = key($aliases);
-        $new_index = sprintf('%s_%s', $index_name, $this->getTimestamp());
+        $indexMappings = current($indexApi->getMapping(['index' => $indexName]));
+        $currentIndex = key($aliases);
+        $newIndex = sprintf('%s_%s', $indexName, $this->getTimestamp());
 
         // Merge mappings from new index settings if provided
-        if (isset($index_settings['mappings'])) {
-            foreach ($index_settings['mappings'] as $type_name => $mapping) {
-                $index_mappings['mappings'] = array_replace(
-                    $index_mappings['mappings'],
-                    [ $type_name => $mapping ]
+        if (isset($indexSettings['mappings'])) {
+            foreach ($indexSettings['mappings'] as $typeName => $mapping) {
+                $indexMappings['mappings'] = array_replace(
+                    $indexMappings['mappings'],
+                    [$typeName => $mapping]
                 );
             }
-            unset($index_settings['mappings']);
+            unset($indexSettings['mappings']);
         }
 
         // Replace existing mappings with new ones
-        foreach ($this->getTypeMappings($migration_target) as $type_name => $mapping) {
-            $index_mappings['mappings'] = array_replace(
-                $index_mappings['mappings'],
-                [ $type_name => $mapping ]
+        foreach ($this->getTypeMappings($migrationTarget) as $typeName => $mapping) {
+            $indexMappings['mappings'] = array_replace(
+                $indexMappings['mappings'],
+                [$typeName => $mapping]
             );
         }
 
         // Create the new index
-        $index_api->create(
+        $indexApi->create(
             [
-                'index' => $new_index,
-                'body' => array_merge($index_settings, $index_mappings)
+                'index' => $newIndex,
+                'body' => array_merge($indexSettings, $indexMappings)
             ]
         );
 
@@ -135,140 +135,140 @@ abstract class ElasticsearchMigration extends Migration
                 'search_type' => 'scan',
                 'scroll' => self::SCROLL_TIMEOUT,
                 'size' => self::SCROLL_SIZE,
-                'index'=> $current_index
+                'index'=> $currentIndex
             ]
         );
-        $scroll_id = $response['_scroll_id'];
-        $total_docs = $response['hits']['total'];
+        $scrollId = $response['_scroll_id'];
+        $totalDocs = $response['hits']['total'];
 
         while (true) {
-            $response = $client->scroll([ 'scroll_id' => $scroll_id, 'scroll' => self::SCROLL_TIMEOUT ]);
+            $response = $client->scroll(['scroll_id' => $scrollId, 'scroll' => self::SCROLL_TIMEOUT]);
             if (count($response['hits']['hits']) > 0) {
                 foreach ($response['hits']['hits'] as $document) {
                     $bulk[]['index'] = [
-                        '_index' => $new_index,
+                        '_index' => $newIndex,
                         '_type' => $document['_type'],
                         '_id' => $document['_id']
                     ];
                     $bulk[] = $document['_source'];
                 }
-                $client->bulk([ 'body' => $bulk ]);
+                $client->bulk(['body' => $bulk]);
                 unset($bulk);
-                $scroll_id = $response['_scroll_id'];
+                $scrollId = $response['_scroll_id'];
             } else {
                 break;
             }
         }
 
         // Check reindexed document count is correct
-        $index_api->flush();
-        $new_count = $client->count([ 'index' => $new_index ])['count'];
-        if ($total_docs != $new_count) {
+        $indexApi->flush();
+        $newCount = $client->count(['index' => $newIndex])['count'];
+        if ($totalDocs != $newCount) {
             throw new RuntimeError(sprintf(
                 'Aborting migration because document count of %s after reindexing does not match expected count of %s',
-                $new_count,
-                $total_docs
+                $newCount,
+                $totalDocs
             ));
         }
 
         // Switch aliases from old to new index
         $actions = [
-            [ 'remove' => [ 'alias' => $index_name, 'index' => $current_index ] ],
-            [ 'add' => [ 'alias' => $index_name, 'index' => $new_index ] ]
+            ['remove' => ['alias' => $indexName, 'index' => $currentIndex]],
+            ['add' => ['alias' => $indexName, 'index' => $newIndex]]
         ];
-        $index_api->updateAliases([ 'body' => [ 'actions' => $actions ] ]);
+        $indexApi->updateAliases(['body' => ['actions' => $actions]]);
     }
 
-    protected function updateIndexTemplates(MigrationTargetInterface $migration_target, array $templates)
+    protected function updateIndexTemplates(MigrationTargetInterface $migrationTarget, array $templates)
     {
-        $index_api = $this->getConnection($migration_target)->indices();
-        foreach ($templates as $template_name => $template_file) {
-            if (!is_readable($template_file)) {
-                throw new RuntimeError(sprintf('Unable to read index template at: %s', $template_file));
+        $indexApi = $this->getConnection($migrationTarget)->indices();
+        foreach ($templates as $templateName => $templateFile) {
+            if (!is_readable($templateFile)) {
+                throw new RuntimeError(sprintf('Unable to read index template at: %s', $templateFile));
             }
-            $template = JsonToolkit::parse(file_get_contents($template_file));
-            $index_api->putTemplate([ 'name' => $template_name, 'body' => $template]);
+            $template = JsonToolkit::parse(file_get_contents($templateFile));
+            $indexApi->putTemplate(['name' => $templateName, 'body' => $template]);
         }
     }
 
-    protected function createSearchTemplates(MigrationTargetInterface $migration_target, array $templates)
+    protected function createSearchTemplates(MigrationTargetInterface $migrationTarget, array $templates)
     {
-        $client = $this->getConnection($migration_target);
-        foreach ($templates as $template_name => $template_file) {
-            if (!is_readable($template_file)) {
-                throw new RuntimeError(sprintf('Unable to read search template at: %s', $template_file));
+        $client = $this->getConnection($migrationTarget);
+        foreach ($templates as $templateName => $templateFile) {
+            if (!is_readable($templateFile)) {
+                throw new RuntimeError(sprintf('Unable to read search template at: %s', $templateFile));
             }
             $client->putTemplate(
                 [
-                    'id' => $template_name,
-                    'body' => file_get_contents($template_file)
+                    'id' => $templateName,
+                    'body' => file_get_contents($templateFile)
                 ]
             );
         }
     }
 
-    protected function getIndexSettings(MigrationTargetInterface $migration_target, $include_type_mapping = false)
+    protected function getIndexSettings(MigrationTargetInterface $migrationTarget, $includeTypeMapping = false)
     {
-        $settings_json_file = $this->getIndexSettingsPath($migration_target);
+        $settingsJsonFile = $this->getIndexSettingsPath($migrationTarget);
 
-        if (empty($settings_json_file)) {
+        if (empty($settingsJsonFile)) {
             return [];
         }
 
-        if (!is_readable($settings_json_file)) {
-            throw new RuntimeError(sprintf('Unable to read settings for index at: %s', $settings_json_file));
+        if (!is_readable($settingsJsonFile)) {
+            throw new RuntimeError(sprintf('Unable to read settings for index at: %s', $settingsJsonFile));
         }
 
         // Index is created with migration timestamp suffix and aliased in order to support
         // zero down-time migrations
-        $index_name = $this->getIndexName($migration_target);
-        $index_settings['index'] = sprintf('%s_%s', $index_name, $this->getTimestamp());
-        $index_settings['body'] = JsonToolkit::parse(file_get_contents($settings_json_file));
-        $index_settings['body']['aliases'][$index_name] = new \stdClass();
+        $indexName = $this->getIndexName($migrationTarget);
+        $indexSettings['index'] = sprintf('%s_%s', $indexName, $this->getTimestamp());
+        $indexSettings['body'] = JsonToolkit::parse(file_get_contents($settingsJsonFile));
+        $indexSettings['body']['aliases'][$indexName] = new \stdClass();
 
-        if ($include_type_mapping) {
-            $type_mappings = $this->getTypeMappings($migration_target);
-            if (isset($index_settings['body']['mappings'])) {
-                $index_settings['body']['mappings'] = array_merge(
-                    $index_settings['body']['mappings'],
-                    $type_mappings
+        if ($includeTypeMapping) {
+            $typeMappings = $this->getTypeMappings($migrationTarget);
+            if (isset($indexSettings['body']['mappings'])) {
+                $indexSettings['body']['mappings'] = array_merge(
+                    $indexSettings['body']['mappings'],
+                    $typeMappings
                 );
             } else {
-                $index_settings['body']['mappings'] = $type_mappings;
+                $indexSettings['body']['mappings'] = $typeMappings;
             }
         }
 
-        return $index_settings;
+        return $indexSettings;
     }
 
-    protected function getAliasMapping(MigrationTargetInterface $migration_target)
+    protected function getAliasMapping(MigrationTargetInterface $migrationTarget)
     {
         $aliases = [];
-        $index_api = $this->getConnection($migration_target)->indices();
+        $indexApi = $this->getConnection($migrationTarget)->indices();
 
         try {
-            $aliases = $index_api->getAlias([ 'name' => $this->getIndexName($migration_target) ]);
+            $aliases = $indexApi->getAlias(['name' => $this->getIndexName($migrationTarget)]);
         } catch (Missing404Exception $error) {
         }
 
         return $aliases;
     }
 
-    protected function getIndexName(MigrationTargetInterface $migration_target)
+    protected function getIndexName(MigrationTargetInterface $migrationTarget)
     {
-        return $migration_target->getConfig()->get('index');
+        return $migrationTarget->getConfig()->get('index');
     }
 
-    protected function getTypeMappings(MigrationTargetInterface $migration_target)
+    protected function getTypeMappings(MigrationTargetInterface $migrationTarget)
     {
         $mappings = [];
-        $paths = (array) $this->getTypeMappingPaths($migration_target);
+        $paths = (array) $this->getTypeMappingPaths($migrationTarget);
 
-        foreach ($paths as $type_name => $mapping_file) {
-            if (!is_readable($mapping_file)) {
-                throw new RuntimeError(sprintf('Unable to read type-mapping at: %s', $mapping_file));
+        foreach ($paths as $typeName => $mappingFile) {
+            if (!is_readable($mappingFile)) {
+                throw new RuntimeError(sprintf('Unable to read type-mapping at: %s', $mappingFile));
             }
-            $mappings[$type_name] = JsonToolkit::parse(file_get_contents($mapping_file));
+            $mappings[$typeName] = JsonToolkit::parse(file_get_contents($mappingFile));
         }
 
         return $mappings;

@@ -16,11 +16,11 @@ class AuthorType extends ProjectionType
         parent::__construct(
             'Author',
             [
-                new TextAttribute('firstname', $this, [ 'mandatory' => true, 'min_length' => 2 ]),
-                new TextAttribute('lastname', $this, [ 'mandatory' => true ]),
-                new EmailAttribute('email', $this, [ 'mandatory' => true ]),
+                new TextAttribute('firstname', $this, ['mandatory' => true, 'min_length' => 2]),
+                new TextAttribute('lastname', $this, ['mandatory' => true]),
+                new EmailAttribute('email', $this, ['mandatory' => true]),
                 new TimestampAttribute('birth_date', $this),
-                new TextAttribute('blurb', $this, [ 'default_value' =>  'the grinch' ]),
+                new TextAttribute('blurb', $this, ['default_value' =>  'the grinch']),
                 new EmbeddedEntityListAttribute(
                     'products',
                     $this,

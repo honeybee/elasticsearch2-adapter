@@ -10,17 +10,17 @@ use Trellis\Runtime\EntityTypeInterface;
 
 class HighlightType extends EmbeddedEntityType
 {
-    public function __construct(EntityTypeInterface $parent = null, AttributeInterface $parent_attribute = null)
+    public function __construct(EntityTypeInterface $parent = null, AttributeInterface $parentAttribute = null)
     {
         parent::__construct(
             'Highlight',
             [
-                new TextAttribute('title', $this, [ 'mandatory' => true ], $parent_attribute),
-                new TextAttribute('description', $this, [], $parent_attribute)
+                new TextAttribute('title', $this, ['mandatory' => true], $parentAttribute),
+                new TextAttribute('description', $this, [], $parentAttribute)
             ],
             new Options,
             $parent,
-            $parent_attribute
+            $parentAttribute
         );
     }
 

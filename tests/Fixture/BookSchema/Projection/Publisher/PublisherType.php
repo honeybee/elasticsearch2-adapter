@@ -12,7 +12,7 @@ class PublisherType extends ProjectionType
         parent::__construct(
             'Publisher',
             [
-                new TextAttribute('name', $this, [ 'mandatory' => true ]),
+                new TextAttribute('name', $this, ['mandatory' => true]),
                 new TextAttribute('description', $this)
             ]
         );
