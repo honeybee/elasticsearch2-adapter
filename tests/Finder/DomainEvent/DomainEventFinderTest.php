@@ -42,7 +42,7 @@ class DomainEventFinderTest extends TestCase
         );
 
         $domainEventFinder->getByIdentifier('test_id');
-    }
+    } //@codeCoverageIgnore
 
     /**
      * @expectedException Honeybee\Common\Error\RuntimeError
@@ -60,7 +60,7 @@ class DomainEventFinderTest extends TestCase
         );
 
         $domainEventFinder->getByIdentifier('test_id');
-    }
+    } //@codeCoverageIgnore
 
     /**
      * @expectedException Honeybee\Common\Error\RuntimeError
@@ -78,7 +78,7 @@ class DomainEventFinderTest extends TestCase
         );
 
         $domainEventFinder->getByIdentifier('test_id');
-    }
+    } //@codeCoverageIgnore
 
     public function testGetByIdentifier()
     {

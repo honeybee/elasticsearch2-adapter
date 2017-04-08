@@ -17,7 +17,7 @@ class CustomQueryTranslationTest extends TestCase
     {
         $query = Mockery::mock(QueryInterface::CLASS);
         (new CustomQueryTranslation)->translate($query);
-    }
+    } //@codeCoverageIgnore
 
     public function testTranslateQuery()
     {

@@ -43,7 +43,7 @@ class ElasticsearchFinderTest extends TestCase
     public function testGetByIdentifierNumeric()
     {
         $this->makeFinder()->getByIdentifier(123);
-    }
+    } //@codeCoverageIgnore
 
     /**
      * @expectedException Assert\InvalidArgumentException
@@ -51,7 +51,7 @@ class ElasticsearchFinderTest extends TestCase
     public function testGetByIdentifierEmpty()
     {
         $this->makeFinder()->getByIdentifier('');
-    }
+    } //@codeCoverageIgnore
 
     /**
      * @expectedException Assert\InvalidArgumentException
@@ -60,7 +60,7 @@ class ElasticsearchFinderTest extends TestCase
     {
         $this->mockConnector->shouldReceive('getConfig')->once()->withNoArgs()->andReturn(new ArrayConfig([]));
         $this->makeFinder(['index' => ''])->getByIdentifier('test_id');
-    }
+    } //@codeCoverageIgnore
 
     /**
      * @expectedException Honeybee\Common\Error\RuntimeError
@@ -69,7 +69,7 @@ class ElasticsearchFinderTest extends TestCase
     {
         $this->mockConnector->shouldReceive('getConfig')->twice()->withNoArgs()->andReturn(new ArrayConfig([]));
         $this->makeFinder(['index' => ['index1', 'index2'], 'type' => 'type1'])->getByIdentifier('test_id');
-    }
+    } //@codeCoverageIgnore
 
     /**
      * @expectedException Honeybee\Common\Error\RuntimeError
@@ -78,7 +78,7 @@ class ElasticsearchFinderTest extends TestCase
     {
         $this->mockConnector->shouldReceive('getConfig')->twice()->withNoArgs()->andReturn(new ArrayConfig([]));
         $this->makeFinder(['index' => 'index1,index2', 'type' => 'type1'])->getByIdentifier('test_id');
-    }
+    } //@codeCoverageIgnore
 
     /**
      * @expectedException Honeybee\Common\Error\RuntimeError
@@ -87,7 +87,7 @@ class ElasticsearchFinderTest extends TestCase
     {
         $this->mockConnector->shouldReceive('getConfig')->twice()->withNoArgs()->andReturn(new ArrayConfig([]));
         $this->makeFinder(['index' => 'index1', 'type' => 'type1,type2'])->getByIdentifier('test_id');
-    }
+    } //@codeCoverageIgnore
 
     /**
      * @expectedException Honeybee\Common\Error\RuntimeError
@@ -96,7 +96,7 @@ class ElasticsearchFinderTest extends TestCase
     {
         $this->mockConnector->shouldReceive('getConfig')->twice()->withNoArgs()->andReturn(new ArrayConfig([]));
         $this->makeFinder(['index' => 'index1', 'type' => ['type1', 'type2']])->getByIdentifier('test_id');
-    }
+    } //@codeCoverageIgnore
 
     public function testGetByIdentifierMissing404()
     {
@@ -143,7 +143,7 @@ class ElasticsearchFinderTest extends TestCase
     public function testGetByIdentifiersEmpty()
     {
         $this->makeFinder()->getByIdentifiers([]);
-    }
+    } //@codeCoverageIgnore
 
     public function testGetByIdentifiers()
     {
@@ -177,7 +177,7 @@ class ElasticsearchFinderTest extends TestCase
     public function testFindStringQuery()
     {
         $this->makeFinder()->find('invalid query');
-    }
+    } //@codeCoverageIgnore
 
     public function testFind()
     {
@@ -213,7 +213,7 @@ class ElasticsearchFinderTest extends TestCase
     public function testFindByStoredStringQuery()
     {
         $this->makeFinder()->findByStored('invalid query');
-    }
+    } //@codeCoverageIgnore
 
     public function testFindByStored()
     {
@@ -247,7 +247,7 @@ class ElasticsearchFinderTest extends TestCase
     public function testScrollStartStringQuery()
     {
         $this->makeFinder()->scrollStart('invalid query');
-    }
+    } //@codeCoverageIgnore
 
     public function testScrollStart()
     {
@@ -285,7 +285,7 @@ class ElasticsearchFinderTest extends TestCase
     public function testScrollNextInvalidCursor()
     {
         $this->makeFinder()->scrollNext('');
-    }
+    } //@codeCoverageIgnore
 
     public function testScrollNext()
     {
@@ -310,7 +310,7 @@ class ElasticsearchFinderTest extends TestCase
     public function testScrollEndInvalidCursor()
     {
         $this->makeFinder()->scrollEnd('');
-    }
+    } //@codeCoverageIgnore
 
     public function testScrollEnd()
     {

@@ -152,7 +152,7 @@ class ProjectionReaderTest extends TestCase
         );
 
         $projectionReader->read($identifier);
-    }
+    } //@codeCoverageIgnore
 
     public function testReadMissing()
     {

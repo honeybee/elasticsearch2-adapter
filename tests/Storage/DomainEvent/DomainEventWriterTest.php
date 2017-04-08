@@ -26,7 +26,7 @@ class DomainEventWriterTest extends TestCase
     {
         $eventWriter = new DomainEventWriter($this->mockConnector, new ArrayConfig([]), new NullLogger);
         $eventWriter->write('');
-    }
+    } //@codeCoverageIgnore
 
     public function testWrite()
     {

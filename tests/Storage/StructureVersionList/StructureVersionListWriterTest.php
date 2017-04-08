@@ -26,7 +26,7 @@ class StructureVersionListWriterTest extends TestCase
     {
         $versionListWriter = new StructureVersionListWriter($this->mockConnector, new ArrayConfig([]), new NullLogger);
         $versionListWriter->write('');
-    }
+    } //@codeCoverageIgnore
 
     public function testWrite()
     {

@@ -49,7 +49,7 @@ class ProjectionFinderTest extends TestCase
         );
 
         $projectionFinder->getByIdentifier('test_id');
-    }
+    } //@codeCoverageIgnore
 
     /**
      * @expectedException Honeybee\Common\Error\RuntimeError
@@ -68,7 +68,7 @@ class ProjectionFinderTest extends TestCase
         );
 
         $projectionFinder->getByIdentifier('test_id');
-    }
+    } //@codeCoverageIgnore
 
     public function testGetByIdentifierWithSource()
     {

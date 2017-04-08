@@ -25,7 +25,7 @@ class StoredQueryTranslationTest extends TestCase
         );
 
         (new StoredQueryTranslation(new ArrayConfig([])))->translate($query);
-    }
+    } //@codeCoverageIgnore
 
     public function testTranslateDefault()
     {
