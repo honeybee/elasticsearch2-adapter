@@ -58,6 +58,7 @@ class ElasticsearchFinderTest extends TestCase
      */
     public function testGetByIdentifierIndexEmpty()
     {
+        $this->mockConnector->shouldReceive('getConfig')->once()->withNoArgs()->andReturn(new ArrayConfig([]));
         $this->makeFinder(['index' => ''])->getByIdentifier('test_id');
     }
 
@@ -66,6 +67,7 @@ class ElasticsearchFinderTest extends TestCase
      */
     public function testGetByIdentifierIndexArrayMultiple()
     {
+        $this->mockConnector->shouldReceive('getConfig')->twice()->withNoArgs()->andReturn(new ArrayConfig([]));
         $this->makeFinder(['index' => ['index1', 'index2'], 'type' => 'type1'])->getByIdentifier('test_id');
     }
 
@@ -74,6 +76,7 @@ class ElasticsearchFinderTest extends TestCase
      */
     public function testGetByIdentifierIndexStringMultiple()
     {
+        $this->mockConnector->shouldReceive('getConfig')->twice()->withNoArgs()->andReturn(new ArrayConfig([]));
         $this->makeFinder(['index' => 'index1,index2', 'type' => 'type1'])->getByIdentifier('test_id');
     }
 
@@ -82,6 +85,7 @@ class ElasticsearchFinderTest extends TestCase
      */
     public function testGetByIdentifierTypeStringMultiple()
     {
+        $this->mockConnector->shouldReceive('getConfig')->twice()->withNoArgs()->andReturn(new ArrayConfig([]));
         $this->makeFinder(['index' => 'index1', 'type' => 'type1,type2'])->getByIdentifier('test_id');
     }
 
@@ -90,6 +94,7 @@ class ElasticsearchFinderTest extends TestCase
      */
     public function testGetByIdentifierTypeArrayMultiple()
     {
+        $this->mockConnector->shouldReceive('getConfig')->twice()->withNoArgs()->andReturn(new ArrayConfig([]));
         $this->makeFinder(['index' => 'index1', 'type' => ['type1', 'type2']])->getByIdentifier('test_id');
     }
 
@@ -100,6 +105,7 @@ class ElasticsearchFinderTest extends TestCase
             'type' => ['type1', 'type2'],
             'id' => 'test_id'
         ])->andThrow(Missing404Exception::CLASS);
+        $this->mockConnector->shouldReceive('getConfig')->twice()->withNoArgs()->andReturn(new ArrayConfig([]));
         $this->mockConnector->shouldReceive('getConnection')->once()->withNoArgs()->andReturn($this->mockClient);
 
         $mockFinder = $this->makeFinder(['type' => 'type1,type2']);
@@ -116,6 +122,7 @@ class ElasticsearchFinderTest extends TestCase
             'id' => 'test_id',
             'routing' => 'route'
         ])->andReturn($testData);
+        $this->mockConnector->shouldReceive('getConfig')->twice()->withNoArgs()->andReturn(new ArrayConfig([]));
         $this->mockConnector->shouldReceive('getConnection')->once()->withNoArgs()->andReturn($this->mockClient);
 
         $mockFinder = $this->makeFinder([
@@ -150,6 +157,7 @@ class ElasticsearchFinderTest extends TestCase
                 'size' => 100000
             ]
         ])->andReturn($testData);
+        $this->mockConnector->shouldReceive('getConfig')->twice()->withNoArgs()->andReturn(new ArrayConfig([]));
         $this->mockConnector->shouldReceive('getConnection')->once()->withNoArgs()->andReturn($this->mockClient);
 
         $mockFinder = $this->makeFinder([
@@ -175,12 +183,14 @@ class ElasticsearchFinderTest extends TestCase
     {
         $testData = ['hits' => ['total' => 11, 'hits' => [['raw' => 'result']]]];
         $this->mockClient->shouldReceive('search')->once()->with([
-            'index' => ['_all'],
-            'type' => ['_all'],
+            'index' => ['test_index'],
+            'type' => ['test_type'],
             'routing' => 'abc',
             'from' => 10,
             'body' => ['match_all' => []]
         ])->andReturn($testData);
+        $connectorConfig = new ArrayConfig(['index' => 'test_index', 'type' => ['test_type']]);
+        $this->mockConnector->shouldReceive('getConfig')->twice()->withNoArgs()->andReturn($connectorConfig);
         $this->mockConnector->shouldReceive('getConnection')->once()->withNoArgs()->andReturn($this->mockClient);
 
         $mockFinder = $this->makeFinder([
@@ -214,6 +224,7 @@ class ElasticsearchFinderTest extends TestCase
             'routing' => 'abc',
             'body' => ['params' => ['key' => 'value', 'from' => 10]]
         ])->andReturn($testData);
+        $this->mockConnector->shouldReceive('getConfig')->twice()->withNoArgs()->andReturn(new ArrayConfig([]));
         $this->mockConnector->shouldReceive('getConnection')->once()->withNoArgs()->andReturn($this->mockClient);
 
         $mockFinder = $this->makeFinder([
@@ -249,6 +260,7 @@ class ElasticsearchFinderTest extends TestCase
             'sort' => ['_doc'],
             'body' => ['match_all' => []]
         ])->andReturn($testData);
+        $this->mockConnector->shouldReceive('getConfig')->twice()->withNoArgs()->andReturn(new ArrayConfig([]));
         $this->mockConnector->shouldReceive('getConnection')->once()->withNoArgs()->andReturn($this->mockClient);
 
         $mockFinder = $this->makeFinder([

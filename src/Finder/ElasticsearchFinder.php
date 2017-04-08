@@ -205,7 +205,8 @@ abstract class ElasticsearchFinder extends Finder
      */
     protected function getIndex()
     {
-        $index = $this->config->get('index', '_all');
+        $fallBackIndex = $this->connector->getConfig()->get('index', '_all');
+        $index = $this->config->get('index', $fallBackIndex);
         Assertion::notEmpty($index);
         if (is_scalar($index)) {
             $index = explode(',', $index);
@@ -218,7 +219,8 @@ abstract class ElasticsearchFinder extends Finder
      */
     protected function getType()
     {
-        $type = $this->config->get('type', '_all');
+        $fallBackType = $this->connector->getConfig()->get('type', '_all');
+        $type = $this->config->get('type', $fallBackType);
         Assertion::notEmpty($type);
         if (is_scalar($type)) {
             $type = explode(',', $type);

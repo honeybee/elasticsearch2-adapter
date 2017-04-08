@@ -14,20 +14,29 @@ use Psr\Log\NullLogger;
 
 class DomainEventFinderTest extends TestCase
 {
+    private $mockClient;
+
+    private $mockConnector;
+
+    public function setUp()
+    {
+        $this->mockClient = Mockery::mock(Client::CLASS);
+        $this->mockConnector = Mockery::mock(ElasticsearchConnector::CLASS);
+        $this->mockConnector->shouldReceive('getConfig')->twice()->withNoArgs()->andReturn(new ArrayConfig([]));
+        $this->mockConnector->shouldReceive('getConnection')->once()->withNoArgs()->andReturn($this->mockClient);
+        $this->mockConnector->shouldReceive('isConnected')->never();
+    }
+
     /**
      * @expectedException Honeybee\Common\Error\RuntimeError
      */
     public function testGetByIdentifierNoHits()
     {
-        $mockClient = Mockery::mock(Client::CLASS);
-        $mockClient->shouldReceive('get')->once()
+        $this->mockClient->shouldReceive('get')->once()
             ->with(['index' => ['index1'], 'type' => ['type1'], 'id' => 'test_id'])->andReturn([]);
-        $mockConnector = Mockery::mock(ElasticsearchConnector::CLASS);
-        $mockConnector->shouldReceive('getConnection')->once()->withNoArgs()->andReturn($mockClient);
-        $mockConnector->shouldReceive('isConnected')->never();
 
         $domainEventFinder = new DomainEventFinder(
-            $mockConnector,
+            $this->mockConnector,
             new ArrayConfig(['index' => 'index1', 'type' => 'type1']),
             new NullLogger
         );
@@ -40,16 +49,12 @@ class DomainEventFinderTest extends TestCase
      */
     public function testGetByIdentifierNoObjectType()
     {
-        $mockClient = Mockery::mock(Client::CLASS);
-        $mockClient->shouldReceive('get')->once()
+        $this->mockClient->shouldReceive('get')->once()
             ->with(['index' => ['_all'], 'type' => ['type1'], 'id' => 'test_id'])
             ->andReturn(['hits' => ['hits' => [['_source' => []]]]]);
-        $mockConnector = Mockery::mock(ElasticsearchConnector::CLASS);
-        $mockConnector->shouldReceive('getConnection')->once()->withNoArgs()->andReturn($mockClient);
-        $mockConnector->shouldReceive('isConnected')->never();
 
         $domainEventFinder = new DomainEventFinder(
-            $mockConnector,
+            $this->mockConnector,
             new ArrayConfig(['type' => 'type1']),
             new NullLogger
         );
@@ -62,16 +67,12 @@ class DomainEventFinderTest extends TestCase
      */
     public function testGetByIdentifierInvalidObjectType()
     {
-        $mockClient = Mockery::mock(Client::CLASS);
-        $mockClient->shouldReceive('get')->once()
+        $this->mockClient->shouldReceive('get')->once()
             ->with(['index' => ['index1'], 'type' => ['type1'], 'id' => 'test_id'])
             ->andReturn(['hits' => ['hits' => [['_source' => ['@type' => 'stdClass']]]]]);
-        $mockConnector = Mockery::mock(ElasticsearchConnector::CLASS);
-        $mockConnector->shouldReceive('getConnection')->once()->withNoArgs()->andReturn($mockClient);
-        $mockConnector->shouldReceive('isConnected')->never();
 
         $domainEventFinder = new DomainEventFinder(
-            $mockConnector,
+            $this->mockConnector,
             new ArrayConfig(['index' => 'index1', 'type' => 'type1']),
             new NullLogger
         );
@@ -97,16 +98,12 @@ class DomainEventFinderTest extends TestCase
             ]
         ];
 
-        $mockClient = Mockery::mock(Client::CLASS);
-        $mockClient->shouldReceive('get')->once()
+        $this->mockClient->shouldReceive('get')->once()
             ->with(['index' => ['_all'], 'type' => ['type1', 'type2'], 'id' => 'test_id'])
             ->andReturn(['hits' => ['hits' => [['_source' => $source]]]]);
-        $mockConnector = Mockery::mock(ElasticsearchConnector::CLASS);
-        $mockConnector->shouldReceive('getConnection')->once()->withNoArgs()->andReturn($mockClient);
-        $mockConnector->shouldReceive('isConnected')->never();
 
         $domainEventFinder = new DomainEventFinder(
-            $mockConnector,
+            $this->mockConnector,
             new ArrayConfig(['index' => '_all', 'type' => 'type1,type2']),
             new NullLogger
         );

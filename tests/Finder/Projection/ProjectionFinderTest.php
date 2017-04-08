@@ -25,8 +25,10 @@ class ProjectionFinderTest extends TestCase
     {
         $this->mockTypeMap = Mockery::mock(ProjectionTypeMap::CLASS);
         $this->mockConnector = Mockery::mock(ElasticsearchConnector::CLASS);
-        $this->mockConnector->shouldReceive('isConnected')->never();
         $this->mockClient = Mockery::mock(Client::CLASS);
+        $this->mockConnector->shouldReceive('getConfig')->twice()->withNoArgs()->andReturn(new ArrayConfig([]));
+        $this->mockConnector->shouldReceive('getConnection')->once()->withNoArgs()->andReturn($this->mockClient);
+        $this->mockConnector->shouldReceive('isConnected')->never();
     }
 
     /**
@@ -37,7 +39,7 @@ class ProjectionFinderTest extends TestCase
         $this->mockClient->shouldReceive('get')->once()
             ->with(['index' => ['index1'], 'type' => ['type1'], 'id' => 'test_id'])
             ->andReturn([]);
-        $this->mockConnector->shouldReceive('getConnection')->once()->withNoArgs()->andReturn($this->mockClient);
+
 
         $projectionFinder = new ProjectionFinder(
             $this->mockConnector,
@@ -57,7 +59,6 @@ class ProjectionFinderTest extends TestCase
         $this->mockClient->shouldReceive('get')->once()
             ->with(['index' => ['index1'], 'type' => ['type1'], 'id' => 'test_id'])
             ->andReturn(['_source' => ['missing_type']]);
-        $this->mockConnector->shouldReceive('getConnection')->once()->withNoArgs()->andReturn($this->mockClient);
 
         $projectionFinder = new ProjectionFinder(
             $this->mockConnector,
@@ -79,7 +80,6 @@ class ProjectionFinderTest extends TestCase
         $this->mockClient->shouldReceive('get')->once()
             ->with(['index' => ['_all'], 'type' => ['type1'], 'id' => 'test_id'])
             ->andReturn($testResult);
-        $this->mockConnector->shouldReceive('getConnection')->once()->withNoArgs()->andReturn($this->mockClient);
         $projectionType = new BookType;
         $this->mockTypeMap->shouldReceive('getItem')->once()->with('mock_type')->andReturn($projectionType);
 
@@ -112,7 +112,6 @@ class ProjectionFinderTest extends TestCase
         $this->mockClient->shouldReceive('get')->once()
             ->with(['index' => ['_all'], 'type' => ['type1', 'type2'], 'id' => 'test_id'])
             ->andReturn($testResult);
-        $this->mockConnector->shouldReceive('getConnection')->once()->withNoArgs()->andReturn($this->mockClient);
         $projectionType = new BookType;
         $this->mockTypeMap->shouldReceive('getItem')->once()->with('mock_type')->andReturn($projectionType);
 
@@ -148,7 +147,6 @@ class ProjectionFinderTest extends TestCase
         $this->mockClient->shouldReceive('get')->once()
             ->with(['index' => ['index1'], 'type' => ['type1'], 'id' => 'test_id'])
             ->andReturn($testResult);
-        $this->mockConnector->shouldReceive('getConnection')->once()->withNoArgs()->andReturn($this->mockClient);
         $projectionType = new BookType;
         $this->mockTypeMap->shouldReceive('getItem')->once()->with('mock_type')->andReturn($projectionType);
 

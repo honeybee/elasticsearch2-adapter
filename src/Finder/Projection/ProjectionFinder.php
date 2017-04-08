@@ -3,9 +3,9 @@
 namespace Honeybee\Elasticsearch2\Finder\Projection;
 
 use Honeybee\Common\Error\RuntimeError;
+use Honeybee\Elasticsearch2\Finder\ElasticsearchFinder;
 use Honeybee\Infrastructure\Config\ConfigInterface;
 use Honeybee\Infrastructure\DataAccess\Connector\ConnectorInterface;
-use Honeybee\Elasticsearch2\Finder\ElasticsearchFinder;
 use Honeybee\Projection\ProjectionTypeMap;
 use Psr\Log\LoggerInterface;
 
