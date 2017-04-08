@@ -1,5 +1,5 @@
 {
-    "name": "honeybee/elasticsearch2",
+    "name": "honeybee/elasticsearch2-adapter",
     "type": "library",
     "description": "Elasticsearch 2.x adapter for Honeybee.",
     "keywords": [ "honeybee", "elasticsearch", "adapter" ],
