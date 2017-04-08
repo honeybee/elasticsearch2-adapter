@@ -13,10 +13,11 @@ class StructureVersionListWriter extends ElasticsearchStorageWriter
     {
         Assertion::isInstanceOf($structureVersionList, StructureVersionList::CLASS);
 
+        $identifier = $structureVersionList->getIdentifier();
         $this->writeData(
-            $structureVersionList->getIdentifier(),
+            $identifier,
             [
-                'identifier' => $structureVersionList->getIdentifier(),
+                'identifier' => $identifier,
                 'versions' => $structureVersionList->toArray()
             ]
         );
