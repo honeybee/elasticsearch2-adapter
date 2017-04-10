@@ -29,6 +29,7 @@ class ElasticsearchConnectorTest extends TestCase
         $connection = $connector->getConnection();
         $this->assertTrue($connector->isConnected(), 'Connector should be connected after getConnection() call');
         $this->assertTrue(is_object($connection), 'A getConnection() call should yield a client/connection object');
+        $this->assertSame($connection, $connector->getConnection());
     }
 
     public function testDisconnectWorks()

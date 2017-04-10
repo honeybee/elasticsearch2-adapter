@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "88523716b25272d6d4039d4c378875fd",
+    "content-hash": "0dd7d1e284c8f077f75adc6a8ca31dfe",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -487,12 +487,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/honeybee/honeybee.git",
-                "reference": "12bc108ca7e6cdde98e2543b40f152efe110dfb5"
+                "reference": "c442d83de667282600a409ee0ef9304c4d1c116f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/honeybee/honeybee/zipball/12bc108ca7e6cdde98e2543b40f152efe110dfb5",
-                "reference": "12bc108ca7e6cdde98e2543b40f152efe110dfb5",
+                "url": "https://api.github.com/repos/honeybee/honeybee/zipball/c442d83de667282600a409ee0ef9304c4d1c116f",
+                "reference": "c442d83de667282600a409ee0ef9304c4d1c116f",
                 "shasum": ""
             },
             "require": {
@@ -569,7 +569,7 @@
                 "hexagonal",
                 "messaging"
             ],
-            "time": "2017-04-05 18:31:13"
+            "time": "2017-04-10 13:03:26"
         },
         {
             "name": "honeybee/trellis",
@@ -1067,16 +1067,16 @@
         },
         {
             "name": "rdlowrey/auryn",
-            "version": "v1.4.0",
+            "version": "v1.4.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/rdlowrey/auryn.git",
-                "reference": "2e4240791162dfe073d59654d8dc06df0eb0b73f"
+                "reference": "c6c92ec081c707f7e9e0a69185665147b30d66de"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rdlowrey/auryn/zipball/2e4240791162dfe073d59654d8dc06df0eb0b73f",
-                "reference": "2e4240791162dfe073d59654d8dc06df0eb0b73f",
+                "url": "https://api.github.com/repos/rdlowrey/auryn/zipball/c6c92ec081c707f7e9e0a69185665147b30d66de",
+                "reference": "c6c92ec081c707f7e9e0a69185665147b30d66de",
                 "shasum": ""
             },
             "require": {
@@ -1124,7 +1124,7 @@
                 "dic",
                 "ioc"
             ],
-            "time": "2016-03-14T20:10:19+00:00"
+            "time": "2017-04-07T16:12:28+00:00"
         },
         {
             "name": "react/promise",
@@ -3140,7 +3140,7 @@
                 "github",
                 "test"
             ],
-            "time": "2017-03-31T10:12:47+00:00"
+            "time": "2017-03-31 10:12:47"
         },
         {
             "name": "sebastian/code-unit-reverse-lookup",
